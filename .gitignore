@@ -1,0 +1,12 @@
+.idea
+*.pyc
+*.pyo
+.DS_Store
+node_modules
+*.iml
+target
+
+API_Testing_RESTful_booker\bin
+API_Testing_RESTful_booker\obj
+packages/
+TestResults/
