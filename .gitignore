@@ -6,8 +6,8 @@ node_modules
 *.iml
 target
 
-API_Testing_RESTful_booker\bin/
-API_Testing_RESTful_booker\obj/
-API_Testing_RESTful_booker\.vs/
+API_Testing_RESTful_booker\bin
+API_Testing_RESTful_booker\obj
+.vs/
 packages/
 TestResults/
