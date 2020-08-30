@@ -53,7 +53,7 @@ namespace API_Testing_RESTful_booker.TestCases
             "\n(Step1: Make a post request to add new booking and save its bookingid" +
             "\n(Step2: Make a patch request and update booking using bookingid from step1" +
             "\n(Step3: Make a get response and verify the booking has been updated")]
-        public void UpdatePartialBooking_XmlRequest_JsonResponse()
+        public void UpdatePartialBooking_JsonRequest_JsonResponse()
         {
             string tokenvalue = restResponse.Data.token;
             Dictionary<string, string> header = new Dictionary<string, string>()
@@ -61,7 +61,7 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "text/xml" },
                 {"Accept", "application/json" }
             };
-            Model.JSONModel.Request.Booking booking = new Model.JSONModel.Request.Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 02, 18), new DateTime(2017, 02, 21)), "Towel");
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 02, 18), new DateTime(2017, 02, 21)), "Towel");
             string xmlrequest = booking.CreateBookinginXMLFormat(booking.firstname,booking.lastname,booking.totalprice,booking.depositpaid,booking.bookingdates,booking.additionalneeds);
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, xmlrequest, DataFormat.Xml);
@@ -76,7 +76,7 @@ namespace API_Testing_RESTful_booker.TestCases
             booking.SetLastname("Dahal");
             booking.SetTotalPrice(130);
             RestClientHelper restClientHelper1 = new RestClientHelper();
-            IRestResponse<Model.JSONModel.Request.Booking> restresponse1 = restClientHelper1.PerformPatchRequest<Model.JSONModel.Request.Booking>(url + "/" + bookingid, header, tokenvalue, booking, DataFormat.Json);
+            IRestResponse<Booking> restresponse1 = restClientHelper1.PerformPatchRequest<Booking>(url + "/" + bookingid, header, tokenvalue, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse1.StatusCode);
 
             header = new Dictionary<string, string>()
@@ -84,13 +84,12 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Accept", "application/json" }
             };
             RestClientHelper restClientHelper2 = new RestClientHelper();
-            IRestResponse<Model.JSONModel.Request.Booking> restresponse2 = restClientHelper2.PerformGetRequest<Model.JSONModel.Request.Booking>(url + "/" + bookingid, header);
+            IRestResponse<Booking> restresponse2 = restClientHelper2.PerformGetRequest<Booking>(url + "/" + bookingid, header);
             Assert.AreEqual(200, (int)restresponse2.StatusCode);
             Assert.IsNotNull(restresponse2.Content, "Rest response is null");
             Assert.IsTrue(restresponse2.Data.firstname.Contains("Raju"), "Firstname is not updated ");
             Assert.IsTrue(restresponse2.Data.lastname.Contains("Dahal"), "Lastname is not updated");
             Assert.AreEqual(130, restresponse2.Data.totalprice, "Total price is not updated");
-            
         }
     }
 }

@@ -63,7 +63,7 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "text/xml" },
                 {"Accept", "application/json" }
             };
-            Model.JSONModel.Request.Booking booking = new Model.JSONModel.Request.Booking();
+            Booking booking = new Booking();
             string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 02, 18), new DateTime(2017, 02, 21)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, xmlrequest, DataFormat.Xml);
@@ -77,7 +77,7 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             xmlrequest = booking.CreateBookinginXMLFormat("Manu", "Chandu", 150, false, new Bookingdates(new DateTime(2016, 02, 19), new DateTime(2017, 02, 20)), "Towel not needed");
             RestClientHelper restClientHelper1 = new RestClientHelper();
-            IRestResponse<Model.JSONModel.Request.Booking> restresponse1 = restClientHelper1.PerformPutRequest<Model.JSONModel.Request.Booking>(url+"/" + bookingid, header, tokenvalue, xmlrequest, DataFormat.Xml);
+            IRestResponse<Booking> restresponse1 = restClientHelper1.PerformPutRequest<Booking>(url+"/" + bookingid, header, tokenvalue, xmlrequest, DataFormat.Xml);
             Assert.AreEqual(200, (int)restresponse1.StatusCode);
 
             header = new Dictionary<string, string>()
@@ -85,15 +85,15 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Accept", "application/json" }
             };
             RestClientHelper restClientHelper2 = new RestClientHelper();
-            IRestResponse<Model.JSONModel.Request.Booking> restresponse2 = restClientHelper2.PerformGetRequest<Model.JSONModel.Request.Booking>(url + "/" + bookingid, header);
+            IRestResponse<Booking> restresponse2 = restClientHelper2.PerformGetRequest<Booking>(url + "/" + bookingid, header);
             Assert.AreEqual(200, (int)restresponse2.StatusCode);
             Assert.IsNotNull(restresponse2.Content, "Rest response is null");
             Assert.IsTrue(restresponse2.Data.firstname.Contains("Manu"), "Firstname is not updated ");
             Assert.IsTrue(restresponse2.Data.lastname.Contains("Chandu"), "Lastname is not updated");
             Assert.AreEqual(150,restresponse2.Data.totalprice, "Total price is not updated");
             Assert.AreNotEqual(false,restresponse2.Data.depositpaid, "Deposit paid should not be updated.");
-            Assert.AreEqual("2016-2-19", Model.JSONModel.Request.Booking.convertdateinstring(restresponse2.Data.bookingdates.checkin), "Checkin date is not updated");
-            Assert.AreEqual("2017-2-20", Model.JSONModel.Request.Booking.convertdateinstring(restresponse2.Data.bookingdates.checkout), "Checkout date is not updated");
+            Assert.AreEqual("2016-02-19", Booking.convertdateinstring(restresponse2.Data.bookingdates.checkin), "Checkin date is not updated");
+            Assert.AreEqual("2017-02-20", Booking.convertdateinstring(restresponse2.Data.bookingdates.checkout), "Checkout date is not updated");
             Assert.IsTrue(restresponse2.Data.additionalneeds.Contains("Towel not needed"), "Additional needs is not updated");
         }
 

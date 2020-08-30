@@ -63,7 +63,7 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
             };
-            Model.JSONModel.Request.Booking booking = new Model.JSONModel.Request.Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
@@ -97,7 +97,7 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
             };
-            Model.JSONModel.Request.Booking booking = new Model.JSONModel.Request.Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);

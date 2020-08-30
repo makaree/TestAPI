@@ -13,14 +13,24 @@ using System.Web;
 
 namespace API_Testing_RESTful_booker.HelperClass.Request
 {
+    /// <summary>
+    /// This class is used to perform different type of request methods and it returns
+    /// the corresponding responses.
+    /// </summary>
     public class RestClientHelper
     {
+        /// <summary>
+        /// Creates a new Client and returns value as client
+        /// </summary>
         private IRestClient GetRestClient()
         {
             IRestClient restClient = new RestClient();
             return restClient;
         }
 
+        /// <summary>
+        /// Adds to request: method, url, header, token value, and body for serialization of XML and JSON format
+        /// </summary>
         private IRestRequest GetRestRequest(string url, Dictionary<string, string> header,string tokenvalue, Method method, object body, DataFormat dataformat)
         {
             IRestRequest restRequest = new RestRequest()
@@ -58,6 +68,39 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
             return restRequest;
         }
 
+        /// <summary>
+        /// Adds to request: method, url, header, token value, and body for serialization of Url Encoded format
+        /// </summary>
+        private IRestRequest GetRestRequest(string url, Dictionary<string, string> header, string tokenvalue, Method method, object body, bool urlencoded)
+        {
+            IRestRequest restRequest = new RestRequest()
+            {
+                Method = method,
+                Resource = url
+            };
+
+            if (header != null)
+            {
+                foreach (string key in header.Keys)
+                {
+                    restRequest.AddHeader(key, header[key]);
+                }
+            }
+            if (tokenvalue != null)
+            {
+                restRequest.AddCookie(Global.TOKEN_NAME, tokenvalue);
+            }
+            if (body != null&&urlencoded==true)
+            {
+                restRequest.AddParameter("application/x-www-form-urlencoded", body, ParameterType.RequestBody);
+
+            }
+            return restRequest;
+        }
+
+        /// <summary>
+        /// Executes the client with given request and returns the response
+        /// </summary>
         private IRestResponse SendRequest(IRestRequest restRequest)
         {
             IRestClient restClient = GetRestClient();
@@ -65,6 +108,9 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
             return restResponse;
         }
 
+        /// <summary>
+        /// Executes the client with given request and returns the response for data collection represented by arbitary type T
+        /// </summary>
         private IRestResponse<T> SendRequest<T>(IRestRequest restRequest) where T : new()
         {
             IRestClient restClient = GetRestClient();
@@ -83,6 +129,10 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
             return restResponse;
         }
 
+
+        /// <summary>
+        /// Performs GET Method and returns the response obtained from ececution
+        /// </summary>
         public IRestResponse PerformGetRequest(string url, Dictionary<string, string> header)
         {
             IRestRequest restrequest = GetRestRequest(url, header,null, Method.GET, null, DataFormat.None);
@@ -90,12 +140,9 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
             return restresponse;
         }
 
-        public IRestResponse<T> PerformGetRequest<T>(string url, Dictionary<string, string> header) where T : new()
-        {
-            IRestRequest restrequest = GetRestRequest(url, header,null, Method.GET, null, DataFormat.None);
-            IRestResponse<T> restresponse = SendRequest<T>(restrequest);
-            return restresponse;
-        }
+        /// <summary>
+        /// Performs GET Method when query parameter is given and returns the response obtained from ececution
+        /// </summary>
         public IRestResponse PerformGetRequest(string url, Dictionary<string, string> header, Dictionary<string, string> queryparameter)
         {
             IRestRequest restrequest = GetRestRequest(url, header, null, Method.GET, null, DataFormat.None);
@@ -110,20 +157,19 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
             return restresponse;
         }
 
-        public IRestResponse<T> PerformPostRequest<T>(string url, Dictionary<string, string> header,string tokenvalue, object body, DataFormat dataformat) where T : new()
+        /// <summary>
+        /// Performs GET Method and returns the response obtained from execution for data collection represented by arbitary type T
+        /// </summary>
+        public IRestResponse<T> PerformGetRequest<T>(string url, Dictionary<string, string> header) where T : new()
         {
-            IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.POST, body, dataformat);
+            IRestRequest restrequest = GetRestRequest(url, header,null, Method.GET, null, DataFormat.None);
             IRestResponse<T> restresponse = SendRequest<T>(restrequest);
             return restresponse;
         }
 
-        public IRestResponse<T> PerformPatchRequest<T>(string url, Dictionary<string, string> header, string tokenvalue, object body, DataFormat dataformat) where T : new()
-        {
-            IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.PATCH, body, dataformat);
-            IRestResponse<T> restresponse = SendRequest<T>(restrequest);
-            return restresponse;
-        }
-
+        /// <summary>
+        /// Performs POST Method and returns the response obtained from execution for XML and JSON format
+        /// </summary>
         public IRestResponse PerformPostRequest(string url, Dictionary<string, string> header, string tokenvalue, object body, DataFormat dataformat)
         {
             IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.POST, body, dataformat);
@@ -131,13 +177,52 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
             return restresponse;
         }
 
-        public IRestResponse<T> PerformPutRequest<T>(string url, Dictionary<string, string> header, string tokenvalue, object body, DataFormat dataformat) where T : new()
+        /// <summary>
+        /// Performs POST Method and returns the response obtained from execution for url encoded format
+        /// </summary>
+        public IRestResponse PerformPostRequest(string url, Dictionary<string, string> header, string tokenvalue, object body, bool urlencoded)
         {
-            IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.PUT, body, dataformat);
+            IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.POST, body, urlencoded);
+            IRestResponse restresponse = SendRequest(restrequest);
+            return restresponse;
+        }
+
+        /// <summary>
+        /// Performs POST Method and returns the response obtained from execution for data collection represented by arbitary 
+        /// type T for XML and JSON format
+        /// </summary>
+        public IRestResponse<T> PerformPostRequest<T>(string url, Dictionary<string, string> header,string tokenvalue, object body, DataFormat dataformat) where T : new()
+        {
+            IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.POST, body, dataformat);
             IRestResponse<T> restresponse = SendRequest<T>(restrequest);
             return restresponse;
         }
 
+        /// <summary>
+        /// Performs POST Method and returns the response obtained from execution for data collection represented by arbitary 
+        /// type T for urlencoded format
+        /// </summary>
+        public IRestResponse<T> PerformPostRequest<T>(string url, Dictionary<string, string> header, string tokenvalue, object body, bool urlencoded) where T : new()
+        {
+            IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.POST, body, urlencoded);
+            IRestResponse<T> restresponse = SendRequest<T>(restrequest);
+            return restresponse;
+        }
+
+        /// <summary>
+        /// Performs PATCH Method and returns the response obtained from execution for data collection represented by arbitary 
+        /// type T 
+        /// </summary>
+        public IRestResponse<T> PerformPatchRequest<T>(string url, Dictionary<string, string> header, string tokenvalue, object body, DataFormat dataformat) where T : new()
+        {
+            IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.PATCH, body, dataformat);
+            IRestResponse<T> restresponse = SendRequest<T>(restrequest);
+            return restresponse;
+        }
+
+        /// <summary>
+        /// Performs PUT Method and returns the response obtained from execution 
+        /// </summary>
         public IRestResponse PerformPutRequest(string url, Dictionary<string, string> header, string tokenvalue, object body, DataFormat dataformat)
         {
             IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.PUT, body, dataformat);
@@ -145,6 +230,20 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
             return restresponse;
         }
 
+        /// <summary>
+        /// Performs PUT Method and returns the response obtained from execution for data collection represented by arbitary 
+        /// type T 
+        /// </summary>
+        public IRestResponse<T> PerformPutRequest<T>(string url, Dictionary<string, string> header, string tokenvalue, object body, DataFormat dataformat) where T : new()
+        {
+            IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.PUT, body, dataformat);
+            IRestResponse<T> restresponse = SendRequest<T>(restrequest);
+            return restresponse;
+        }
+
+        /// <summary>
+        /// Performs DELETE Method and returns the response obtained from execution 
+        /// </summary>
         public IRestResponse PerformDeleteRequest(string url, Dictionary<string, string> header, string tokenvalue)
         {
             IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.DELETE, null, DataFormat.None);
