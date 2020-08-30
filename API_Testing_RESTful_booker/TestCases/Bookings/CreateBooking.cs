@@ -59,6 +59,130 @@ namespace API_Testing_RESTful_booker.TestCases
 
         /// <summary>
         /// This test creates a new booking in the API using post request for 
+        /// a new booking request format as JSON and response format as XML
+        /// </summary>
+        [TestMethod]
+        [Description(@"This test makes post request for creating a new booking in the API with request format as JSON and" +
+            "response format as XML. The test steps are:" +
+            "\n(Step1: Send post request using JSON content-type." +
+            "\n(Step2: Verify the response is successful and contains the request data")]
+        public void CreateBooking_JsonRequest_XmlResponse()
+        {
+            Dictionary<string, string> header = new Dictionary<string, string>()
+            {
+                {"Content-Type", "application/json" },
+                {"Accept", "application/xml" }
+            };
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse<CreatedbookingXML> restResponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(url, header, null, booking, DataFormat.Json);
+            Assert.AreEqual(200, (int)restResponse.StatusCode);
+            Assert.IsNotNull(restResponse.Data, "Rest response is null");
+            Assert.IsTrue(restResponse.Data.Booking.Firstname.Contains("Manisha"), "Data has not been added");
+        }
+
+        /// <summary>
+        /// This test creates a new booking in the API using post request for 
+        /// a new booking request format as JSON and response format as Url encoded
+        /// </summary>
+        [TestMethod]
+        [Description(@"This test makes post request for creating a new booking in the API with request format as JSON and" +
+            "response format as XML. The test steps are:" +
+            "\n(Step1: Send post request using JSON content-type." +
+            "\n(Step2: Verify the response is successful and contains the request data")]
+        public void CreateBooking_JsonRequest_URLEncodedResponse()
+        {
+            Dictionary<string, string> header = new Dictionary<string, string>()
+            {
+                {"Content-Type", "application/json" },
+                {"Accept", "application/x-www-form-urlencoded" }
+            };
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse restResponse = restClientHelper.PerformPostRequest(url, header, null, booking, DataFormat.Json);
+            Assert.AreEqual(200, (int)restResponse.StatusCode);
+            Assert.IsNotNull(restResponse.Content, "Rest response is null");
+            Assert.IsTrue(restResponse.Content.Contains("&booking%5Btotalprice%5D"), "Data has not been added");
+            Assert.IsTrue(restResponse.Content.Contains("Manisha"), "Firstname has not been added");
+        }
+
+        /// <summary>
+        /// This test creates a new booking in the API using post request for 
+        /// a new booking request format as XML and response format as XML
+        /// </summary>
+        [TestMethod]
+        [Description(@"This test makes post request for creating a new booking in the API with request format as JSON and" +
+            "response format as XML. The test steps are:" +
+            "\n(Step1: Send post request using XML content-type." +
+            "\n(Step2: Verify the response is successful and contains the request data")]
+        public void CreateBooking_XmlRequest_XmlResponse()
+        {
+            Dictionary<string, string> header = new Dictionary<string, string>()
+            {
+                {"Content-Type", "text/xml" },
+                {"Accept", "application/xml" }
+            };
+            Booking booking = new Booking();
+            string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 2, 18), new DateTime(2017, 2, 21)), "Towel");
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse<CreatedbookingXML> restResponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(url, header, null, xmlrequest, DataFormat.Xml);
+            Assert.AreEqual(200, (int)restResponse.StatusCode);
+            Assert.IsNotNull(restResponse.Data, "Rest response is null");
+            Assert.IsTrue(restResponse.Data.Booking.Firstname.Contains("Manisha"), "Data has not been added");
+        }
+
+        /// <summary>
+        /// This test creates a new booking in the API using post request for 
+        /// a new booking request format as XML and response format as JSON
+        /// </summary>
+        [TestMethod]
+        [Description(@"This test makes post request for creating a new booking in the API with request format as JSON and" +
+            "response format as XML. The test steps are:" +
+            "\n(Step1: Send post request using XML content-type." +
+            "\n(Step2: Verify the response is successful and contains the request data")]
+        public void CreateBooking_XmlRequest_JsonResponse()
+        {
+            Dictionary<string, string> header = new Dictionary<string, string>()
+            {
+                {"Content-Type", "text/xml" },
+                {"Accept", "application/json" }
+            };
+            Booking booking = new Booking();
+            string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 2, 18), new DateTime(2017, 2, 21)), "Towel");
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse<BookingResponse> restResponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, xmlrequest, DataFormat.Xml);
+            Assert.AreEqual(200, (int)restResponse.StatusCode);
+            Assert.IsNotNull(restResponse.Data, "Rest response is null");
+            Assert.IsTrue(restResponse.Data.booking.firstname.Contains("Manisha"), "Data has not been added");
+        }
+
+        /// <summary>
+        /// This test creates a new booking in the API using post request for 
+        /// a new booking request format as XML and response format as JSON
+        /// </summary>
+        [TestMethod]
+        [Description(@"This test makes post request for creating a new booking in the API with request format as JSON and" +
+            "response format as XML. The test steps are:" +
+            "\n(Step1: Send post request using XML content-type." +
+            "\n(Step2: Verify the response is successful and contains the request data")]
+        public void CreateBooking_XmlRequest_UrlEncodedResponse()
+        {
+            Dictionary<string, string> header = new Dictionary<string, string>()
+            {
+                {"Content-Type", "text/xml" },
+                {"Accept", "application/x-www-form-urlencoded" }
+            };
+            Booking booking = new Booking();
+            string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 2, 18), new DateTime(2017, 2, 21)), "Towel");
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse restResponse = restClientHelper.PerformPostRequest(url, header, null, xmlrequest, DataFormat.Xml);
+            Assert.AreEqual(200, (int)restResponse.StatusCode);
+            Assert.IsNotNull(restResponse.Content, "Rest response is null");
+            Assert.IsTrue(restResponse.Content.Contains("&booking%5Btotalprice%5D"), "Data has not been added");
+        }
+
+        /// <summary>
+        /// This test creates a new booking in the API using post request for 
         /// a new booking request format encoded in url format and response format as JSON
         /// </summary>
         [TestMethod]

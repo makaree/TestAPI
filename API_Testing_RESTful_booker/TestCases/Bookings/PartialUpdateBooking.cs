@@ -58,13 +58,13 @@ namespace API_Testing_RESTful_booker.TestCases
             string tokenvalue = restResponse.Data.token;
             Dictionary<string, string> header = new Dictionary<string, string>()
             {
-                {"Content-Type", "text/xml" },
+                {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
             };
             Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 02, 18), new DateTime(2017, 02, 21)), "Towel");
-            string xmlrequest = booking.CreateBookinginXMLFormat(booking.firstname,booking.lastname,booking.totalprice,booking.depositpaid,booking.bookingdates,booking.additionalneeds);
+            //string xmlrequest = booking.CreateBookinginXMLFormat(booking.firstname,booking.lastname,booking.totalprice,booking.depositpaid,booking.bookingdates,booking.additionalneeds);
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, xmlrequest, DataFormat.Xml);
+            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
             int bookingid = restresponse.Data.bookingid;
 
@@ -91,5 +91,7 @@ namespace API_Testing_RESTful_booker.TestCases
             Assert.IsTrue(restresponse2.Data.lastname.Contains("Dahal"), "Lastname is not updated");
             Assert.AreEqual(130, restresponse2.Data.totalprice, "Total price is not updated");
         }
+
+
     }
 }

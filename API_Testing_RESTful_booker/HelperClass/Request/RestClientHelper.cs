@@ -242,6 +242,17 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
         }
 
         /// <summary>
+        /// Performs PUT Method and returns the response obtained from execution for data collection represented by arbitary 
+        /// type T for urlencoded format
+        /// </summary>
+        public IRestResponse<T> PerformPutRequest<T>(string url, Dictionary<string, string> header, string tokenvalue, object body, bool urlencoded) where T : new()
+        {
+            IRestRequest restrequest = GetRestRequest(url, header, tokenvalue, Method.POST, body, urlencoded);
+            IRestResponse<T> restresponse = SendRequest<T>(restrequest);
+            return restresponse;
+        }
+
+        /// <summary>
         /// Performs DELETE Method and returns the response obtained from execution 
         /// </summary>
         public IRestResponse PerformDeleteRequest(string url, Dictionary<string, string> header, string tokenvalue)
