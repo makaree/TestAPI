@@ -34,7 +34,7 @@ namespace API_Testing_RESTful_booker.TestCases
             {
                 {"Content-Type", "application/json" }
             };
-                Authenticate authenticate = new Authenticate();
+                var authenticate = new Authenticate();
                 authenticate.SetUsername(Global.DEFAULT_USERNAME);
                 authenticate.SetPassword(Global.DEFAULT_PASSWORD);
                 RestClientHelper restClientHelper = new RestClientHelper();

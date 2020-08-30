@@ -71,7 +71,7 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
             //restRequest.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
             IRestResponse<T> restResponse = restClient.Execute<T>(restRequest);
             
-                if (restResponse.ContentType.Equals("application/xml"))
+                if (restResponse.ContentType.Equals("application/xml")|| restResponse.ContentType.Equals("text/html; charset=utf-8"))
                 {
                     var deserializer = new RestSharp.Deserializers.DotNetXmlDeserializer();
                     restResponse.Data = deserializer.Deserialize<T>(restResponse);
@@ -80,7 +80,6 @@ namespace API_Testing_RESTful_booker.HelperClass.Request
                 {
                     restResponse.Data = JsonConvert.DeserializeObject<T>(restResponse.Content);
                 }
-            
             return restResponse;
         }
 
