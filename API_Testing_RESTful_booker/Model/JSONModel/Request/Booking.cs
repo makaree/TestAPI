@@ -57,6 +57,7 @@ namespace API_Testing_RESTful_booker.Model.JSONModel.Request
         }
         public static string convertdateinstring(DateTime dateinstring)
         {
+            dateinstring = dateinstring.ToLocalTime();
             return dateinstring.Year.ToString() + "-" + ((dateinstring.Month.ToString().Length > 1) ? dateinstring.Month.ToString() : "0" + dateinstring.Month.ToString()) + "-" + ((dateinstring.Day.ToString().Length > 1) ? dateinstring.Day.ToString() : "0" + dateinstring.Day.ToString());
         }
 

@@ -1,6 +1,7 @@
 ﻿using API_Testing_RESTful_booker.HelperClass.Request;
 using API_Testing_RESTful_booker.Model.JSONModel.Request;
 using API_Testing_RESTful_booker.Model.JSONModel.Response;
+using API_Testing_RESTful_booker.Model.XMLModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RestSharp;
 using System;
@@ -45,15 +46,16 @@ namespace API_Testing_RESTful_booker.TestCases
         }
 
         /// <summary>
-        /// This test updates a Updates a current booking with a partial payload using patch request 
+        /// This test updates a Updates a current booking with a partial payload using patch request.
+        /// This test uses Token based Authentication.
         /// </summary>
         [TestMethod]
         [Description(@"This test updates a Updates a current booking with a partial payload using patch request" +
-            "The test steps are: " +
+            "This test uses Token Based Authenticaiton. The test steps are: " +
             "\n(Step1: Make a post request to add new booking and save its bookingid" +
             "\n(Step2: Make a patch request and update booking using bookingid from step1" +
             "\n(Step3: Make a get response and verify the booking has been updated")]
-        public void UpdatePartialBooking_JsonRequest_JsonResponse()
+        public void UpdatePartialBooking_JsonRequest_JsonResponse_TokenAuth()
         {
             string tokenvalue = restResponse.Data.token;
             Dictionary<string, string> header = new Dictionary<string, string>()
@@ -90,6 +92,58 @@ namespace API_Testing_RESTful_booker.TestCases
             Assert.IsTrue(restresponse2.Data.firstname.Contains("Raju"), "Firstname is not updated ");
             Assert.IsTrue(restresponse2.Data.lastname.Contains("Dahal"), "Lastname is not updated");
             Assert.AreEqual(130, restresponse2.Data.totalprice, "Total price is not updated");
+        }
+
+        /// <summary>
+        /// This test updates a Updates a current booking with a partial payload using patch request.
+        /// This test uses Basic Authentication.
+        /// </summary>
+        [TestMethod]
+        [Description(@"This test updates a Updates a current booking with a partial payload using patch request" +
+            "This test uses Basic Authenticaiton. The test steps are: " +
+            "\n(Step1: Make a post request to add new booking and save its bookingid" +
+            "\n(Step2: Make a patch request and update booking using bookingid from step1" +
+            "\n(Step3: Make a get response and verify the booking has been updated")]
+        public void UpdatePartialBooking_JsonRequest_XmlResponse_BasicAuth()
+        {
+            
+            Dictionary<string, string> header = new Dictionary<string, string>()
+            {
+                {"Content-Type", "application/json" },
+                {"Accept", "application/xml" }
+            };
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 02, 18), new DateTime(2017, 02, 21)), "Towel");
+            //string xmlrequest = booking.CreateBookinginXMLFormat(booking.firstname,booking.lastname,booking.totalprice,booking.depositpaid,booking.bookingdates,booking.additionalneeds);
+            RestClientHelper restClientHelper = new RestClientHelper();
+            IRestResponse<CreatedbookingXML> restresponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(url, header, null, booking, DataFormat.Json);
+            Assert.AreEqual(200, (int)restresponse.StatusCode);
+            int bookingid = int.Parse(restresponse.Data.Bookingid);
+
+            header = new Dictionary<string, string>()
+            {
+                {"Content-Type", "application/json" },
+                {"Accept", "application/xml" },
+                {"Authorization","Basic YWRtaW46cGFzc3dvcmQxMjM=" }
+            };
+            DateTime checkin = new DateTime(2016, 02, 09);
+            DateTime checkout = new DateTime(2017, 02, 20);
+            booking.SetAdditionalNeeds("Nothing required");
+            booking.SetBookingDates(new Bookingdates(checkin,checkout));
+            RestClientHelper restClientHelper1 = new RestClientHelper();
+            IRestResponse<BookingXML> restresponse1 = restClientHelper1.PerformPatchRequest<BookingXML>(url + "/" + bookingid, header, null, booking, DataFormat.Json);
+            Assert.AreEqual(200, (int)restresponse1.StatusCode);
+
+            header = new Dictionary<string, string>()
+            {
+                {"Accept", "application/xml" }
+            };
+            RestClientHelper restClientHelper2 = new RestClientHelper();
+            IRestResponse<BookingXML> restresponse2 = restClientHelper2.PerformGetRequest<BookingXML>(url + "/" + bookingid, header);
+            Assert.AreEqual(200, (int)restresponse2.StatusCode);
+            Assert.IsNotNull(restresponse2.Content, "Rest response is null");
+            Assert.AreEqual(Booking.convertdateinstring(checkin), restresponse2.Data.Bookingdates.Checkin, "Checkin date is not updated");
+            Assert.AreEqual(Booking.convertdateinstring(checkout),restresponse2.Data.Bookingdates.Checkout, "Checkout date is not updated");
+            Assert.IsTrue(restresponse2.Data.Additionalneeds.Contains("Nothing required"), "Additional needs is not updated");
         }
 
 

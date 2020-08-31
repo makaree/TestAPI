@@ -71,7 +71,7 @@ namespace API_Testing_RESTful_booker.TestCases
         /// </summary>
         [TestMethod]
         [Description(@"This test returns a specific booking based upon the bookingid provided.  Get Request" +
-            "is sent and the reponse is obtained in xml format. If also verifies in case the values are in XML format")]
+            "is sent and the reponse is obtained in xml format. If also verifies in case the values are in XML format")]        
         public void GetBooking_XmlResponse()
         {
             try
