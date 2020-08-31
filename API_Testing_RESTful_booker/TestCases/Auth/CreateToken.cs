@@ -3,21 +3,18 @@ using API_Testing_RESTful_booker.Model.JSONModel.Request;
 using API_Testing_RESTful_booker.Model.JSONModel.Response;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RestSharp;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace API_Testing_RESTful_booker.TestCases
 {
-    
+    /// <summary>
+    /// This test class is used to test  Auth - CreateToken section
+    /// </summary>
     [TestClass]
     public class CreateToken
     {
         private IRestResponse<AuthenticateResponse> restResponse;
-        private string authurl = "https://restful-booker.herokuapp.com/auth";
-        private string pingurl = "https://restful-booker.herokuapp.com/ping";
+        
         /// <summary>
         /// A simple health check endpoint to confirm whether the API is up and running. 
         /// And also Creates a new auth token to use for access to the PUT and DELETE /booking
@@ -26,7 +23,7 @@ namespace API_Testing_RESTful_booker.TestCases
         public void testinitialize()
         {
             RestClientHelper RestClientHelper = new RestClientHelper();
-            IRestResponse RestResponse = RestClientHelper.PerformGetRequest(pingurl, null);
+            IRestResponse RestResponse = RestClientHelper.PerformGetRequest(URLEndPoint.pingurl, null);
             if (RestResponse.IsSuccessful)
             {
                 Dictionary<string, string> header = new Dictionary<string, string>()
@@ -34,20 +31,20 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" }
             };
                 var authenticate = new Authenticate();
-                authenticate.SetUsername(Global.DEFAULT_USERNAME);
-                authenticate.SetPassword(Global.DEFAULT_PASSWORD);
+                authenticate.SetUsername(AuthenticationValues.DEFAULT_USERNAME);
+                authenticate.SetPassword(AuthenticationValues.DEFAULT_PASSWORD);
                 RestClientHelper restClientHelper = new RestClientHelper();
-                restResponse = restClientHelper.PerformPostRequest<AuthenticateResponse>(authurl, header, null, authenticate, DataFormat.Json);
+                restResponse = restClientHelper.PerformPostRequest<AuthenticateResponse>(URLEndPoint.authurl, header, null, authenticate, DataFormat.Json);
             }
             else
-            Assert.Fail("Could not connect to API.");
+                Assert.Fail("Could not connect to API.");
         }
 
         /// <summary>
         /// This test checks if a new auth token has been created or not
         /// </summary>
         [TestMethod]
-        [Description(@"This test checks if a token value has been created after sending post"+
+        [Description(@"This test checks if a token value has been created after sending post" +
             "request. It also verifies if the token content is null or not")]
         public void CreateToken_Post()
         {

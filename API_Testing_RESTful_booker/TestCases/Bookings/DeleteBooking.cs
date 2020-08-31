@@ -5,21 +5,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace API_Testing_RESTful_booker.TestCases
 {
+    /// <summary>
+    /// This test class is used to test  Bookings - DeleteBooking section
+    /// </summary>
     [TestClass]
     public class DeleteBooking
     {
         private IRestResponse<AuthenticateResponse> restResponse;
-        private string authurl = "https://restful-booker.herokuapp.com/auth";
-        private string delurl = "https://restful-booker.herokuapp.com/booking/";
-        private string url = "https://restful-booker.herokuapp.com/booking";
-        private string pingurl = "https://restful-booker.herokuapp.com/ping";
-
+        
         /// <summary>
         /// A simple health check endpoint to confirm whether the API is up and running. 
         /// And also Creates a new auth token to use for access to the PUT and DELETE /booking
@@ -28,7 +24,7 @@ namespace API_Testing_RESTful_booker.TestCases
         public void testinitialize()
         {
             RestClientHelper RestClientHelper = new RestClientHelper();
-            IRestResponse RestResponse = RestClientHelper.PerformGetRequest(pingurl, null);
+            IRestResponse RestResponse = RestClientHelper.PerformGetRequest(URLEndPoint.pingurl, null);
             if (RestResponse.IsSuccessful)
             {
                 Dictionary<string, string> header = new Dictionary<string, string>()
@@ -36,10 +32,10 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" }
             };
                 var authenticate = new Authenticate();
-                authenticate.SetUsername(Global.DEFAULT_USERNAME);
-                authenticate.SetPassword(Global.DEFAULT_PASSWORD);
+                authenticate.SetUsername(AuthenticationValues.DEFAULT_USERNAME);
+                authenticate.SetPassword(AuthenticationValues.DEFAULT_PASSWORD);
                 RestClientHelper restClientHelper = new RestClientHelper();
-                restResponse = restClientHelper.PerformPostRequest<AuthenticateResponse>(authurl, header, null, authenticate, DataFormat.Json);
+                restResponse = restClientHelper.PerformPostRequest<AuthenticateResponse>(URLEndPoint.authurl, header, null, authenticate, DataFormat.Json);
             }
             else
                 Assert.Fail("Could not connect to API.");
@@ -50,14 +46,17 @@ namespace API_Testing_RESTful_booker.TestCases
         /// token is provided.
         /// </summary>
         [TestMethod]
-        [Description(@"This test deletes a booking in the API using delete request by using token."+
+        [Description(@"This test deletes a booking in the API using delete request by using token." +
             "(The test steps are:" +
-            "\n(Step1. Create a token by providing username and password"+
-            "\n(Step2. Make a post request to add new booking and save its bookingid "+
+            "\n(Step1. Create a token by providing username and password" +
+            "\n(Step2. Make a post request to add new booking and save its bookingid " +
             "\n(Step3. Use token based authentication and perfrom delete request using bookingid from step 2.")]
         public void DeleteBookingUsingToken()
         {
+            //Token is created by providing username and password
             string tokenvalue = restResponse.Data.token;
+
+            //Make a post request to add new booking and save its bookingid
             Dictionary<string, string> header = new Dictionary<string, string>()
             {
                 {"Content-Type", "application/json" },
@@ -65,19 +64,20 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, booking, DataFormat.Json);
+            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
             Assert.IsNotNull(restresponse.Data, "Rest response is null");
             int bookingid = restresponse.Data.bookingid;
 
+            //Use token based authentication and perfrom delete request using bookingid
             header = new Dictionary<string, string>()
             {
                 {"Content-Type", "application/json" }
             };
             RestClientHelper restClientHelper1 = new RestClientHelper();
-            IRestResponse restResponse1 = restClientHelper1.PerformDeleteRequest(delurl + bookingid, header, tokenvalue);
+            IRestResponse restResponse1 = restClientHelper1.PerformDeleteRequest(URLEndPoint.bookingurl + bookingid, header, tokenvalue);
             Assert.AreEqual(201, (int)restResponse1.StatusCode);
-            restResponse1 = restClientHelper.PerformDeleteRequest(delurl + bookingid, header, tokenvalue);
+            restResponse1 = restClientHelper.PerformDeleteRequest(URLEndPoint.bookingurl + bookingid, header, tokenvalue);
             Assert.AreEqual(405, (int)restResponse1.StatusCode);
         }
 
@@ -92,6 +92,7 @@ namespace API_Testing_RESTful_booker.TestCases
             "\n(Step2. Use basic authentication and perfrom delete request using bookingid from step 1.")]
         public void DeleteBookingUsingBasicAuth()
         {
+            //Make a post request to add new booking and save its bookingid
             Dictionary<string, string> header = new Dictionary<string, string>()
             {
                 {"Content-Type", "application/json" },
@@ -99,20 +100,21 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, booking, DataFormat.Json);
+            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
             Assert.IsNotNull(restresponse.Data, "Rest response is null");
             int bookingid = restresponse.Data.bookingid;
 
+            //Use basic authentication and perfrom delete request using bookingid
             header = new Dictionary<string, string>()
             {
                 {"Content-Type", "application/json" },
-                {"Authorization","Basic YWRtaW46cGFzc3dvcmQxMjM=" }
+                {"Authorization", AuthenticationValues.Base64EncodedBaiscAuth() }
             };
             RestClientHelper restClientHelper1 = new RestClientHelper();
-            IRestResponse restResponse1 = restClientHelper1.PerformDeleteRequest(delurl + bookingid, header, null);
+            IRestResponse restResponse1 = restClientHelper1.PerformDeleteRequest(URLEndPoint.bookingurl + bookingid, header, null);
             Assert.AreEqual(201, (int)restResponse1.StatusCode);
-            restResponse1 = restClientHelper.PerformDeleteRequest(delurl + bookingid, header, null);
+            restResponse1 = restClientHelper.PerformDeleteRequest(URLEndPoint.bookingurl + bookingid, header, null);
             Assert.AreEqual(405, (int)restResponse1.StatusCode);
         }
     }

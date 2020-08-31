@@ -55,12 +55,13 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Global.cs" />
+    <Compile Include="Utils\AuthenticationValues.cs" />
     <Compile Include="HelperClass\Request\RestClientHelper.cs" />
     <Compile Include="Model\JSONModel\Request\Authenticate.cs" />
     <Compile Include="Model\JSONModel\Request\Booking.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="TestCases\Bookings\PartialUpdateBooking.cs" />
     <Compile Include="TestCases\Bookings\UpdateBooking.cs" />
     <Compile Include="TestCases\Ping\HealthCheck.cs" />
+    <Compile Include="Utils\URLEndPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

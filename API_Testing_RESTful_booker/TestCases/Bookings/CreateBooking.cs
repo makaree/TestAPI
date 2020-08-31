@@ -10,12 +10,12 @@ using System.Collections.Generic;
 
 namespace API_Testing_RESTful_booker.TestCases
 {
+    /// <summary>
+    /// This test class is used to test  Bookings - CreateBooking section
+    /// </summary>
     [TestClass]
     public class CreateBooking
     {
-        private string url = "https://restful-booker.herokuapp.com/booking";
-        private string pingurl = "https://restful-booker.herokuapp.com/ping";
-
         /// <summary>
         /// A simple health check endpoint to confirm whether the API is up and running.
         /// </summary>
@@ -23,7 +23,7 @@ namespace API_Testing_RESTful_booker.TestCases
         public void testinitialize()
         {
             RestClientHelper RestClientHelper = new RestClientHelper();
-            IRestResponse RestResponse = RestClientHelper.PerformGetRequest(pingurl, null);
+            IRestResponse RestResponse = RestClientHelper.PerformGetRequest(URLEndPoint.pingurl, null);
             if (RestResponse.IsSuccessful)
             {
                 Assert.AreEqual(201, (int)RestResponse.StatusCode);
@@ -39,8 +39,8 @@ namespace API_Testing_RESTful_booker.TestCases
         /// </summary>
         [TestMethod]
         [Description(@"This test makes post request for creating a new booking in the API with request format as JSON and" +
-            "response format as JSON. The test steps are:"+
-            "\n(Step1: Send post request using JSON content-type."+
+            "response format as JSON. The test steps are:" +
+            "\n(Step1: Send post request using JSON content-type." +
             "\n(Step2: Verify the response is successful and contains the request data")]
         public void CreateBooking_JsonRequest_JsonResponse()
         {
@@ -49,9 +49,9 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
             };
-            Booking booking= new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<BookingResponse> restResponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, booking, DataFormat.Json);
+            IRestResponse<BookingResponse> restResponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
             Assert.IsNotNull(restResponse.Data, "Rest response is null");
             Assert.IsTrue(restResponse.Data.booking.firstname.Contains("Manisha"), "Data has not been added");
@@ -75,7 +75,7 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<CreatedbookingXML> restResponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(url, header, null, booking, DataFormat.Json);
+            IRestResponse<CreatedbookingXML> restResponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
             Assert.IsNotNull(restResponse.Data, "Rest response is null");
             Assert.IsTrue(restResponse.Data.Booking.Firstname.Contains("Manisha"), "Data has not been added");
@@ -99,7 +99,7 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse restResponse = restClientHelper.PerformPostRequest(url, header, null, booking, DataFormat.Json);
+            IRestResponse restResponse = restClientHelper.PerformPostRequest(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
             Assert.IsNotNull(restResponse.Content, "Rest response is null");
             Assert.IsTrue(restResponse.Content.Contains("&booking%5Btotalprice%5D"), "Data has not been added");
@@ -125,7 +125,7 @@ namespace API_Testing_RESTful_booker.TestCases
             Booking booking = new Booking();
             string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 2, 18), new DateTime(2017, 2, 21)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<CreatedbookingXML> restResponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(url, header, null, xmlrequest, DataFormat.Xml);
+            IRestResponse<CreatedbookingXML> restResponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(URLEndPoint.bookingurl, header, null, xmlrequest, DataFormat.Xml);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
             Assert.IsNotNull(restResponse.Data, "Rest response is null");
             Assert.IsTrue(restResponse.Data.Booking.Firstname.Contains("Manisha"), "Data has not been added");
@@ -136,6 +136,7 @@ namespace API_Testing_RESTful_booker.TestCases
         /// a new booking request format as XML and response format as JSON
         /// </summary>
         [TestMethod]
+        [TestCategory("Stable")]
         [Description(@"This test makes post request for creating a new booking in the API with request format as JSON and" +
             "response format as XML. The test steps are:" +
             "\n(Step1: Send post request using XML content-type." +
@@ -150,7 +151,7 @@ namespace API_Testing_RESTful_booker.TestCases
             Booking booking = new Booking();
             string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 2, 18), new DateTime(2017, 2, 21)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<BookingResponse> restResponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, xmlrequest, DataFormat.Xml);
+            IRestResponse<BookingResponse> restResponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, xmlrequest, DataFormat.Xml);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
             Assert.IsNotNull(restResponse.Data, "Rest response is null");
             Assert.IsTrue(restResponse.Data.booking.firstname.Contains("Manisha"), "Data has not been added");
@@ -175,7 +176,7 @@ namespace API_Testing_RESTful_booker.TestCases
             Booking booking = new Booking();
             string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 2, 18), new DateTime(2017, 2, 21)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse restResponse = restClientHelper.PerformPostRequest(url, header, null, xmlrequest, DataFormat.Xml);
+            IRestResponse restResponse = restClientHelper.PerformPostRequest(URLEndPoint.bookingurl, header, null, xmlrequest, DataFormat.Xml);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
             Assert.IsNotNull(restResponse.Content, "Rest response is null");
             Assert.IsTrue(restResponse.Content.Contains("&booking%5Btotalprice%5D"), "Data has not been added");
@@ -199,8 +200,8 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            object urlencodedbody = URLformat.SerializeURLformat(booking.firstname,booking.lastname,booking.totalprice,booking.depositpaid,booking.bookingdates);
-            IRestResponse<BookingResponse> restResponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, urlencodedbody, true);
+            object urlencodedbody = URLformat.SerializeURLformat(booking.firstname, booking.lastname, booking.totalprice, booking.depositpaid, booking.bookingdates);
+            IRestResponse<BookingResponse> restResponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, urlencodedbody, true);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
             Assert.IsNotNull(restResponse.Data, "Rest response is null");
             Assert.IsTrue(restResponse.Data.booking.firstname.Contains("Manisha"), "Data has not been added");
@@ -225,7 +226,7 @@ namespace API_Testing_RESTful_booker.TestCases
             Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
             object urlencodedbody = URLformat.SerializeURLformat(booking.firstname, booking.lastname, booking.totalprice, booking.depositpaid, booking.bookingdates);
-            IRestResponse<CreatedbookingXML> restResponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(url, header, null, urlencodedbody, true);
+            IRestResponse<CreatedbookingXML> restResponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(URLEndPoint.bookingurl, header, null, urlencodedbody, true);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
             Assert.IsNotNull(restResponse.Data, "Rest response is null");
             Assert.IsTrue(restResponse.Data.Booking.Firstname.Contains("Manisha"), "Data has not been added");
@@ -250,7 +251,7 @@ namespace API_Testing_RESTful_booker.TestCases
             Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
             object urlencodedbody = URLformat.SerializeURLformat(booking.firstname, booking.lastname, booking.totalprice, booking.depositpaid, booking.bookingdates);
-            IRestResponse restResponse = restClientHelper.PerformPostRequest(url, header, null, urlencodedbody, true);
+            IRestResponse restResponse = restClientHelper.PerformPostRequest(URLEndPoint.bookingurl, header, null, urlencodedbody, true);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
             Assert.IsNotNull(restResponse.Content, "Rest response is null");
             Assert.IsTrue(restResponse.Content.Contains("&booking%5Btotalprice%5D"), "Data has not been added");

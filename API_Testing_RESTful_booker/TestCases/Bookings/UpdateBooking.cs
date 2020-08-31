@@ -7,20 +7,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RestSharp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace API_Testing_RESTful_booker.TestCases
 {
+    /// <summary>
+    /// This test class is used to test  Bookings - UpdateBooking section
+    /// </summary>
     [TestClass]
     public class UpdateBooking
     {
         private IRestResponse<AuthenticateResponse> restResponse;
-        private string authurl = "https://restful-booker.herokuapp.com/auth";
-        private string url = "https://restful-booker.herokuapp.com/booking";
-        private string pingurl = "https://restful-booker.herokuapp.com/ping";
-
+        
         /// <summary>
         /// A simple health check endpoint to confirm whether the API is up and running. 
         /// And also Creates a new auth token to use for access to the PUT and DELETE /booking
@@ -29,7 +26,7 @@ namespace API_Testing_RESTful_booker.TestCases
         public void testinitialize()
         {
             RestClientHelper RestClientHelper = new RestClientHelper();
-            IRestResponse RestResponse = RestClientHelper.PerformGetRequest(pingurl, null);
+            IRestResponse RestResponse = RestClientHelper.PerformGetRequest(URLEndPoint.pingurl, null);
             if (RestResponse.IsSuccessful)
             {
                 Dictionary<string, string> header = new Dictionary<string, string>()
@@ -37,10 +34,10 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" }
             };
                 var authenticate = new Authenticate();
-                authenticate.SetUsername(Global.DEFAULT_USERNAME);
-                authenticate.SetPassword(Global.DEFAULT_PASSWORD);
+                authenticate.SetUsername(AuthenticationValues.DEFAULT_USERNAME);
+                authenticate.SetPassword(AuthenticationValues.DEFAULT_PASSWORD);
                 RestClientHelper restClientHelper = new RestClientHelper();
-                restResponse = restClientHelper.PerformPostRequest<AuthenticateResponse>(authurl, header, null, authenticate, DataFormat.Json);
+                restResponse = restClientHelper.PerformPostRequest<AuthenticateResponse>(URLEndPoint.authurl, header, null, authenticate, DataFormat.Json);
             }
             else
                 Assert.Fail("Could not connect to API.");
@@ -60,6 +57,8 @@ namespace API_Testing_RESTful_booker.TestCases
         public void UpdateBooking_JsonRequest_JsonResponse_TokenAuth()
         {
             string tokenvalue = restResponse.Data.token;
+
+            //Make a post request to add new booking and save its bookingid
             Dictionary<string, string> header = new Dictionary<string, string>()
             {
                 {"Content-Type", "application/json" },
@@ -67,13 +66,14 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             DateTime checkin = new DateTime(2016, 02, 18);
             DateTime checkout = new DateTime(2017, 02, 21);
-            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(checkin,checkout), "Towel");
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(checkin, checkout), "Towel");
             //string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 02, 18), new DateTime(2017, 02, 21)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, booking, DataFormat.Json);
+            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
             int bookingid = restresponse.Data.bookingid;
 
+            //Make a put request and update booking using bookingid
             header = new Dictionary<string, string>()
             {
                 {"Content-Type", "application/json" },
@@ -81,17 +81,18 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             checkin = new DateTime(2016, 02, 09);
             checkout = new DateTime(2017, 02, 20);
-            Booking booking1 =new Booking("Manu", "Chandu", 150, true, new Bookingdates(checkin, checkout), "Towel not needed");
+            Booking booking1 = new Booking("Manu", "Chandu", 150, true, new Bookingdates(checkin, checkout), "Towel not needed");
             RestClientHelper restClientHelper1 = new RestClientHelper();
-            IRestResponse<Booking> restresponse1 = restClientHelper1.PerformPutRequest<Booking>(url+"/" + bookingid, header, tokenvalue, booking1, DataFormat.Json);
+            IRestResponse<Booking> restresponse1 = restClientHelper1.PerformPutRequest<Booking>(URLEndPoint.bookingurl + bookingid, header, tokenvalue, booking1, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse1.StatusCode);
 
+            //Make a get response and verify the booking has been updated
             header = new Dictionary<string, string>()
             {
                 {"Accept", "application/json" }
             };
             RestClientHelper restClientHelper2 = new RestClientHelper();
-            IRestResponse<Booking> restresponse2 = restClientHelper2.PerformGetRequest<Booking>(url + "/" + bookingid, header);
+            IRestResponse<Booking> restresponse2 = restClientHelper2.PerformGetRequest<Booking>(URLEndPoint.bookingurl + bookingid, header);
             Assert.AreEqual(200, (int)restresponse2.StatusCode);
             Assert.IsNotNull(restresponse2.Content, "Rest response is null");
             Assert.IsTrue(restresponse2.Data.firstname.Contains("Manu"), "Firstname is not updated ");
@@ -115,6 +116,8 @@ namespace API_Testing_RESTful_booker.TestCases
         public void UpdateBooking_XmlRequest_XmlResponse()
         {
             string tokenvalue = restResponse.Data.token;
+
+            //Make a post request to add new booking and save its bookingid
             Dictionary<string, string> header = new Dictionary<string, string>()
             {
                 {"Content-Type", "text/xml" },
@@ -123,12 +126,13 @@ namespace API_Testing_RESTful_booker.TestCases
             DateTime checkin = new DateTime(2016, 02, 18);
             DateTime checkout = new DateTime(2017, 02, 21);
             Booking booking = new Booking();
-            string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(checkin,checkout), "Towel");
+            string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(checkin, checkout), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<CreatedbookingXML> restresponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(url, header, null, xmlrequest, DataFormat.Xml);
+            IRestResponse<CreatedbookingXML> restresponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(URLEndPoint.bookingurl, header, null, xmlrequest, DataFormat.Xml);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
             int bookingid = int.Parse(restresponse.Data.Bookingid);
 
+            //Make a put request and update booking using bookingid
             header = new Dictionary<string, string>()
             {
                 {"Content-Type", "text/xml" },
@@ -138,15 +142,16 @@ namespace API_Testing_RESTful_booker.TestCases
             checkout = new DateTime(2017, 02, 20);
             xmlrequest = booking.CreateBookinginXMLFormat("Manu", "Chandu", 150, false, new Bookingdates(new DateTime(2016, 02, 19), new DateTime(2017, 02, 20)), "Towel not needed");
             RestClientHelper restClientHelper1 = new RestClientHelper();
-            IRestResponse<BookingXML> restresponse1 = restClientHelper1.PerformPutRequest<BookingXML>(url + "/" + bookingid, header, tokenvalue, xmlrequest, DataFormat.Xml);
+            IRestResponse<BookingXML> restresponse1 = restClientHelper1.PerformPutRequest<BookingXML>(URLEndPoint.bookingurl + bookingid, header, tokenvalue, xmlrequest, DataFormat.Xml);
             Assert.AreEqual(200, (int)restresponse1.StatusCode);
 
+            //Make a get response and verify the booking has been updated
             header = new Dictionary<string, string>()
             {
                 {"Accept", "application/xml" }
             };
             RestClientHelper restClientHelper2 = new RestClientHelper();
-            IRestResponse<BookingXML> restresponse2 = restClientHelper2.PerformGetRequest<BookingXML>(url + "/" + bookingid, header);
+            IRestResponse<BookingXML> restresponse2 = restClientHelper2.PerformGetRequest<BookingXML>(URLEndPoint.bookingurl + bookingid, header);
             Assert.AreEqual(200, (int)restresponse2.StatusCode);
             Assert.IsNotNull(restresponse2.Content, "Rest response is null");
             Assert.IsTrue(restresponse2.Data.Firstname.Contains("Manu"), "Firstname is not updated ");
@@ -171,6 +176,8 @@ namespace API_Testing_RESTful_booker.TestCases
         public void UpdateBooking_UrlEncodedRequest_UrlEncodedResponse()
         {
             string tokenvalue = restResponse.Data.token;
+
+            //Make a post request to add new booking and save its bookingid
             Dictionary<string, string> header = new Dictionary<string, string>()
             {
                 {"Content-Type","application/x-www-form-urlencoded" },
@@ -178,13 +185,14 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             DateTime checkin = new DateTime(2016, 02, 18);
             DateTime checkout = new DateTime(2017, 02, 21);
-            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(checkin,checkout), "Towel");
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(checkin, checkout), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
             object urlencodedbody = URLformat.SerializeURLformat(booking.firstname, booking.lastname, booking.totalprice, booking.depositpaid, booking.bookingdates);
-            IRestResponse<CreatedbookingXML> restresponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(url, header, null, urlencodedbody, true);
+            IRestResponse<CreatedbookingXML> restresponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(URLEndPoint.bookingurl, header, null, urlencodedbody, true);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
             int bookingid = int.Parse(restresponse.Data.Bookingid);
 
+            // Make a put request and update booking using bookingid
             header = new Dictionary<string, string>()
             {
                {"Content-Type", "application/x-www-form-urlencoded" },
@@ -192,17 +200,18 @@ namespace API_Testing_RESTful_booker.TestCases
             };
             checkin = new DateTime(2016, 12, 16);
             checkout = new DateTime(2017, 12, 29);
-            urlencodedbody = URLformat.SerializeURLformat("Manu", "Chandu", 150, false, new Bookingdates(checkin,checkout));
+            urlencodedbody = URLformat.SerializeURLformat("Manu", "Chandu", 150, false, new Bookingdates(checkin, checkout));
             RestClientHelper restClientHelper1 = new RestClientHelper();
-            IRestResponse restresponse1 = restClientHelper1.PerformPutRequest(url + "/" + bookingid, header, tokenvalue, urlencodedbody, true);
+            IRestResponse restresponse1 = restClientHelper1.PerformPutRequest(URLEndPoint.bookingurl + bookingid, header, tokenvalue, urlencodedbody, true);
             Assert.AreEqual(200, (int)restresponse1.StatusCode);
 
+            //Make a get response and verify the booking has been updated
             header = new Dictionary<string, string>()
             {
                 {"Accept",  "application/x-www-form-urlencoded"}
             };
             RestClientHelper restClientHelper2 = new RestClientHelper();
-            IRestResponse restresponse2 = restClientHelper2.PerformGetRequest(url + "/" + bookingid, header);
+            IRestResponse restresponse2 = restClientHelper2.PerformGetRequest(URLEndPoint.bookingurl + bookingid, header);
             Assert.AreEqual(200, (int)restresponse2.StatusCode);
             Assert.IsNotNull(restresponse2.Content, "Rest response is null");
             Assert.IsTrue(restresponse2.Content.Contains("Manu"), "Firstname is not updated ");
@@ -210,8 +219,8 @@ namespace API_Testing_RESTful_booker.TestCases
             Assert.IsTrue(restresponse2.Content.Contains("150"), "Total price is not updated");
             Assert.IsTrue(restresponse2.Content.Contains(Booking.convertdateinstring(checkin)), "Checkin Date is not updated");
             Assert.IsTrue(restresponse2.Content.Contains(Booking.convertdateinstring(checkout)), "Check out date is not updated");
-            Assert.IsTrue(restresponse2.Content.Contains("true"),"Deposit paid should not be updated.");
-            
+            Assert.IsTrue(restresponse2.Content.Contains("true"), "Deposit paid should not be updated.");
+
         }
 
         /// <summary>
@@ -226,7 +235,8 @@ namespace API_Testing_RESTful_booker.TestCases
             "\n(Step3: Make a get response and verify the booking has been updated")]
         public void UpdateBooking_JsonRequest_JsonResponse_BaiscAuth()
         {
-           Dictionary<string, string> header = new Dictionary<string, string>()
+            //Make a post request to add new booking and save its bookingid
+            Dictionary<string, string> header = new Dictionary<string, string>()
             {
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
@@ -234,31 +244,32 @@ namespace API_Testing_RESTful_booker.TestCases
             DateTime checkin = new DateTime(2016, 02, 18);
             DateTime checkout = new DateTime(2017, 02, 21);
             Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(checkin, checkout), "Towel");
-            //string xmlrequest = booking.CreateBookinginXMLFormat("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 02, 18), new DateTime(2017, 02, 21)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
-            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(url, header, null, booking, DataFormat.Json);
+            IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
             int bookingid = restresponse.Data.bookingid;
 
+            //Make a put request and update booking using bookingid
             header = new Dictionary<string, string>()
             {
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" },
-                {"Authorization","Basic YWRtaW46cGFzc3dvcmQxMjM=" }
+                {"Authorization",AuthenticationValues.Base64EncodedBaiscAuth() }
             };
             checkin = new DateTime(2016, 02, 09);
             checkout = new DateTime(2017, 02, 20);
             Booking booking1 = new Booking("Manu", "Chandu", 150, true, new Bookingdates(checkin, checkout), "Towel not needed");
             RestClientHelper restClientHelper1 = new RestClientHelper();
-            IRestResponse<Booking> restresponse1 = restClientHelper1.PerformPutRequest<Booking>(url + "/" + bookingid, header, null, booking1, DataFormat.Json);
+            IRestResponse<Booking> restresponse1 = restClientHelper1.PerformPutRequest<Booking>(URLEndPoint.bookingurl + bookingid, header, null, booking1, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse1.StatusCode);
 
+            //Make a get response and verify the booking has been updated
             header = new Dictionary<string, string>()
             {
                 {"Accept", "application/json" }
             };
             RestClientHelper restClientHelper2 = new RestClientHelper();
-            IRestResponse<Booking> restresponse2 = restClientHelper2.PerformGetRequest<Booking>(url + "/" + bookingid, header);
+            IRestResponse<Booking> restresponse2 = restClientHelper2.PerformGetRequest<Booking>(URLEndPoint.bookingurl + bookingid, header);
             Assert.AreEqual(200, (int)restresponse2.StatusCode);
             Assert.IsNotNull(restresponse2.Content, "Rest response is null");
             Assert.IsTrue(restresponse2.Data.firstname.Contains("Manu"), "Firstname is not updated ");

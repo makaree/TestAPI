@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace API_Testing_RESTful_booker.Model.XMLModel
 {
+	/// <summary>
+	/// This class defines different data types present in Booking in XML format
+	/// </summary>
 	[XmlRoot(ElementName = "booking")]
 	public class BookingXML
 	{
