@@ -62,7 +62,7 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
             };
-            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 02, 18), new DateTime(2017, 02, 21)), "Towel");
+            Booking booking = new Booking("Arif", "Hood", 200, true, new Bookingdates(new DateTime(2016, 12, 18), new DateTime(2017, 02, 21)), "Braekfast");
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
@@ -112,8 +112,7 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" },
                 {"Accept", "application/xml" }
             };
-            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 02, 18), new DateTime(2017, 02, 21)), "Towel");
-            //string xmlrequest = booking.CreateBookinginXMLFormat(booking.firstname,booking.lastname,booking.totalprice,booking.depositpaid,booking.bookingdates,booking.additionalneeds);
+            Booking booking = new Booking("Mikk", "Poom", 2120, false, new Bookingdates(new DateTime(2017, 01, 21), new DateTime(2017, 02, 21)), "Towel needed");
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<CreatedbookingXML> restresponse = restClientHelper.PerformPostRequest<CreatedbookingXML>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);

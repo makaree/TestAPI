@@ -50,7 +50,8 @@ namespace API_Testing_RESTful_booker.TestCases
             "(The test steps are:" +
             "\n(Step1. Create a token by providing username and password" +
             "\n(Step2. Make a post request to add new booking and save its bookingid " +
-            "\n(Step3. Use token based authentication and perfrom delete request using bookingid from step 2.")]
+            "\n(Step3. Use token based authentication and perfrom delete request using bookingid from step 2."+
+            "\n(Step4. Verify the booking id from step 1 does not exist")]
         public void DeleteBookingUsingToken()
         {
             //Token is created by providing username and password
@@ -62,7 +63,7 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
             };
-            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
+            Booking booking = new Booking("Rodger", "Ferrari", 1200, false, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
@@ -77,6 +78,8 @@ namespace API_Testing_RESTful_booker.TestCases
             RestClientHelper restClientHelper1 = new RestClientHelper();
             IRestResponse restResponse1 = restClientHelper1.PerformDeleteRequest(URLEndPoint.bookingurl + bookingid, header, tokenvalue);
             Assert.AreEqual(201, (int)restResponse1.StatusCode);
+
+            //Verify the booking id and its values does not exist
             restResponse1 = restClientHelper.PerformDeleteRequest(URLEndPoint.bookingurl + bookingid, header, tokenvalue);
             Assert.AreEqual(405, (int)restResponse1.StatusCode);
         }
@@ -89,7 +92,8 @@ namespace API_Testing_RESTful_booker.TestCases
         [Description(@"This test deletes a booking in the API using delete request by using basic authentication." +
             "(The test steps are:" +
             "\n(Step1. Make a post request to add new booking and save its bookingid " +
-            "\n(Step2. Use basic authentication and perfrom delete request using bookingid from step 1.")]
+            "\n(Step2. Use basic authentication and perfrom delete request using bookingid from step 1." +
+            "\n(Step3. Verify the booking id from step 1 does not exist")]
         public void DeleteBookingUsingBasicAuth()
         {
             //Make a post request to add new booking and save its bookingid
@@ -98,7 +102,7 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
             };
-            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
+            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2011, 12, 28), new DateTime(2012, 3, 1)), "Vacation so do not disturb");
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<BookingResponse> restresponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restresponse.StatusCode);
@@ -114,6 +118,8 @@ namespace API_Testing_RESTful_booker.TestCases
             RestClientHelper restClientHelper1 = new RestClientHelper();
             IRestResponse restResponse1 = restClientHelper1.PerformDeleteRequest(URLEndPoint.bookingurl + bookingid, header, null);
             Assert.AreEqual(201, (int)restResponse1.StatusCode);
+
+            //Verify the booking id and its values does not exist
             restResponse1 = restClientHelper.PerformDeleteRequest(URLEndPoint.bookingurl + bookingid, header, null);
             Assert.AreEqual(405, (int)restResponse1.StatusCode);
         }

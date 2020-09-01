@@ -69,7 +69,7 @@ namespace API_Testing_RESTful_booker.TestCases
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
             };
-            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
+            Booking booking = new Booking("Lauri", "Kula", 1200, false, new Bookingdates(new DateTime(2017, 2, 28), new DateTime(2017, 3, 1)), "Towel");
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<BookingResponse> restResponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurl, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
@@ -78,8 +78,8 @@ namespace API_Testing_RESTful_booker.TestCases
             int bookingid = restResponse.Data.bookingid;
             Dictionary<string, string> queryparameter = new Dictionary<string, string>()
             {
-                {"firstname", "Manisha" },
-                {"lastname", "Chanda" }
+                {"firstname", "Lauri" },
+                {"lastname", "Kula" }
             };
             IRestResponse restResponse1 = restClientHelper.PerformGetRequest(URLEndPoint.bookingurlforquery, header, queryparameter);
             Assert.AreEqual(200, (int)restResponse1.StatusCode);
@@ -101,13 +101,17 @@ namespace API_Testing_RESTful_booker.TestCases
             "\n(Step3: Check the response contains bookingid from step1")]
         public void GetBookingIDs_FilterByDate()
         {
+            DateTime checkin = new DateTime(2016, 02, 09);
+            DateTime daybeforecheckin = new DateTime(2016, 02, 08);
+            DateTime checkout = new DateTime(2017, 02, 20);
+            DateTime dayaftercheckout = new DateTime(2017, 02, 21);
             //Make a post request to add new booking and save its bookingid
             Dictionary<string, string> header = new Dictionary<string, string>()
             {
                 {"Content-Type", "application/json" },
                 {"Accept", "application/json" }
             };
-            Booking booking = new Booking("Manisha", "Chanda", 200, true, new Bookingdates(new DateTime(2016, 2, 18), new DateTime(2017, 2, 21)), "Towel");
+            Booking booking = new Booking("Edgar", "Karu", 250, true, new Bookingdates(checkin,checkout), "Christmnas Vacation");
             RestClientHelper restClientHelper = new RestClientHelper();
             IRestResponse<BookingResponse> restResponse = restClientHelper.PerformPostRequest<BookingResponse>(URLEndPoint.bookingurlforquery, header, null, booking, DataFormat.Json);
             Assert.AreEqual(200, (int)restResponse.StatusCode);
@@ -116,13 +120,13 @@ namespace API_Testing_RESTful_booker.TestCases
             int bookingid = restResponse.Data.bookingid;
             Dictionary<string, string> queryparameter = new Dictionary<string, string>()
             {
-                {"checkin","2014-03-01"},
-                {"checkout","2019-03-01"}
+                {"checkin",Booking.convertdateinstring(daybeforecheckin)},
+                {"checkout",Booking.convertdateinstring(dayaftercheckout)}
             };
             IRestResponse restResponse1 = restClientHelper.PerformGetRequest(URLEndPoint.bookingurl, header, queryparameter);
             Assert.AreEqual(200, (int)restResponse1.StatusCode);
             Assert.IsNotNull(restResponse1.Content, "Rest response is null");
-            Assert.IsTrue(restResponse1.Content.Contains(bookingid.ToString()), "Name posted is not present");
+            Assert.IsTrue(restResponse1.Content.Contains(bookingid.ToString()), "Booking ID is not present");
         }
     }
 }
