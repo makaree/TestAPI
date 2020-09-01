@@ -39,11 +39,12 @@ Here are the list of steps required for the test execution:
 2. Open the solution file API_Testing_RESTful_booker.sln and build the solution. If necessary 
 install the nuget packages mentioned in TESTING TOOL (i.e. MSTest, Newtonsoft.JSON, Restsharp,
 TrxToHtml.TrxerConsole) in Refrences >> Manage nuget Packages in the solution.
-3. Go to Environmental Variables (Control Panel>>System and Security>>System>>Environmental 
+3. Build the solution and goto Test>>Configure Run Settings>>Auto Detect runsettings files.
+4. Go to Environmental Variables (Control Panel>>System and Security>>System>>Environmental 
 Variables>>System Variables) and in Path >> Add the location for “vstest.console.exe”. 
 (In my case it was present in C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\
 \IDE\Extensions\TestPlatform)
-4. Run runtest.bat file present in TestAPI directory. After run, the test results are present 
+5. Run runtest.bat file present in TestAPI directory. After run, the test results are present 
 in TestAPI\TestResults folder in both HTML and TRX format.
 
 ## Contact
