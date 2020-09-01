@@ -64,7 +64,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Utils\AuthenticationValues.cs" />
+    <Compile Include="Configuration\AuthenticationValues.cs" />
     <Compile Include="HelperClass\Request\RestClientHelper.cs" />
     <Compile Include="Model\JSONModel\Request\Authenticate.cs" />
     <Compile Include="Model\JSONModel\Request\Booking.cs" />
@@ -85,14 +85,11 @@
     <Compile Include="TestCases\Bookings\PartialUpdateBooking.cs" />
     <Compile Include="TestCases\Bookings\UpdateBooking.cs" />
     <Compile Include="TestCases\Ping\HealthCheck.cs" />
-    <Compile Include="Utils\URLEndPoint.cs" />
+    <Compile Include="Configuration\URLEndPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="testrun.runsettings" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="TestData\CreateBooking.xml" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
