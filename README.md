@@ -48,4 +48,4 @@ Variables>>System Variables) and in Path >> Add the location for “vstest.conso
 in TestAPI\TestResults folder in both HTML and TRX format if no errors are present.
 
 ## Contact
-If you got any questions feel free to contact with me: manz.karki@gmail.com
+If you got any questions feel free to contact me: manz.karki@gmail.com
