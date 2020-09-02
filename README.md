@@ -44,7 +44,7 @@ TrxToHtml.TrxerConsole) in Refrences >> Manage nuget Packages in the solution.
 Variables>>System Variables) and in Path >> Add the location for “vstest.console.exe”. 
 (In my case it was present in C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\
 \IDE\Extensions\TestPlatform)
-5. Run runtest.bat file present in . After run, the test results are present 
+5. Run runtest.bat file present in TestAPI folder. After run, the test results are present 
 in TestAPI\TestResults folder in both HTML and TRX format if no errors are present.
 
 ## Contact
