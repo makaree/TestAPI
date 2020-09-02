@@ -36,10 +36,10 @@ the solution.
 ## Running the test cases through runtest.bat
 Here are the list of steps required for the test execution:
 1. Download the repository from the GIT.
-2. Open the solution file API_Testing_RESTful_booker.sln and build the solution. If necessary 
+2. Open the solution file API_Testing_RESTful_booker.sln. Go to Test>>Configure Run Settings and select Auto Detect runsettings Files if not selected.
+3. Clean the solution and Build the solution, check the refrences, if not installed then
 install the nuget packages mentioned in TESTING TOOL (i.e. MSTest, Newtonsoft.JSON, Restsharp,
 TrxToHtml.TrxerConsole) in Refrences >> Manage nuget Packages in the solution.
-3. Go to Test>>Configure Run Settings and select Auto Detect runsettings Files.
 4. Go to Environmental Variables (Control Panel>>System and Security>>System>>Environmental 
 Variables>>System Variables) and in Path >> Add the location for “vstest.console.exe”. 
 (In my case it was present in C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\
